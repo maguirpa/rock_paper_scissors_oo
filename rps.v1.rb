@@ -13,6 +13,12 @@ class Human < Player
     self.choice = gets.chomp.downcase
     end until Game::CHOICES.keys.include?(choice)
   end
+
+  def set_name
+    puts "Lets play Rock, Paper, Scissors."
+    puts "What's your name?"
+    self.name = gets.chomp.capitalize!
+  end
 end
 
 class Computer < Player
@@ -33,7 +39,7 @@ module Hand
           (player.choice == 's' && computer.choice == 'p') || 
           (player.choice == 'p' && computer.choice == 'r') 
       winning_message(player.choice)
-      puts "Player wins!"
+      puts "#{player.name} wins!"
     else 
       winning_message(computer.choice)
       puts "Computer wins!"
@@ -58,21 +64,26 @@ class Game
   include Hand
 
   def initialize
-    @player = Human.new("Player")
+    @player = Human.new(" ")
     @computer = Computer.new("The Robot")
   end
 
-  def play
-    player.pick_hand
-    computer.pick_hand
-    display_choice(player)
-    display_choice(computer)
-    compare_hands
+  def replay?
+    puts "Press any key to continue or 'n' to quit."
+    play_again = gets.chomp.downcase
   end
+
+  def play
+    player.set_name
+    begin
+      player.pick_hand
+      computer.pick_hand
+      display_choice(player)
+      display_choice(computer)
+      compare_hands
+    end until replay? == 'n'
+  end
+
 end
 
-begin
 game = Game.new.play
-puts "Press any key to continue or 'n' to quit."
-play_again = gets.chomp.downcase
-end until play_again == 'n'
